@@ -32,7 +32,11 @@ jobs:
       - name: install buildozer
         run: |
           pip install buildozer
-
+      #install Cython
+      -name: install cython
+       run: |
+          pip install cython
+          
       # Build the APK
       - name: Build APK
         run: |
