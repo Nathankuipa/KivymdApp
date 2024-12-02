@@ -1,46 +1,20 @@
-name: Build APK with Buildozer
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+      - name: Build APK
+        uses: digreatbrian/buildozer-action@v2
+        with:
+          python-version: 3.8
+          buildozer-cmd: buildozer -v android debug
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.8'
-
-    - name: Install Android SDK and dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y openjdk-8-jdk wget unzip
-        # Download Android command-line tools
-        wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip -O /tmp/android-sdk.zip
-        sudo unzip /tmp/android-sdk.zip -d /usr/local/android-sdk
-        # Move the tools into the proper directory
-        sudo mv /usr/local/android-sdk/cmdline-tools /usr/local/android-sdk/cmdline-tools/latest
-        # Add sdkmanager to PATH
-        echo "export ANDROID_HOME=/usr/local/android-sdk" >> $GITHUB_ENV
-        echo "export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH" >> $GITHUB_ENV
-        # Install necessary SDK components
-        sudo $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
-        sudo $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --update
-        sudo $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;29.0.2" "platforms;android-29" "platform-tools" "tools"
-        
-    - name: Install Buildozer
-      run: |
-        sudo apt-get install -y python3-pip
-        pip install --upgrade pip
-        pip install buildozer
-
-    - name: Build APK
-      run: |
-        cd your-project-directory
-        buildozer android debug 
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: package
+          path: ./bin/*.apk 
