@@ -17,17 +17,20 @@ jobs:
       with:
         python-version: '3.8'
 
-    - name: Install Android SDK
+    - name: Install Android SDK and dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y openjdk-8-jdk
-        sudo apt-get install -y android-sdk
-        sudo apt-get install -y android-tools-adb
-        sudo apt-get install -y android-tools-fastboot
-        # Install AIDL and other dependencies
-        sdkmanager "build-tools;29.0.2" "platforms;android-29" "platform-tools" "tools"
+        sudo apt-get install -y openjdk-8-jdk wget unzip
+        # Download and install Android SDK
+        wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip -O /tmp/android-sdk.zip
+        sudo unzip /tmp/android-sdk.zip -d /usr/local/android-sdk
+        # Add android-sdk to the path
+        echo "export ANDROID_HOME=/usr/local/android-sdk" >> $GITHUB_ENV
+        echo "export PATH=$ANDROID_HOME/cmdline-tools/bin:$PATH" >> $GITHUB_ENV
+        # Install necessary SDK tools using sdkmanager
         sdkmanager --update
-
+        sdkmanager "build-tools;29.0.2" "platforms;android-29" "platform-tools" "tools"
+        
     - name: Install Buildozer
       run: |
         sudo apt-get install -y python3-pip
