@@ -28,6 +28,20 @@ jobs:
           sudo apt install -y git zip unzip openjdk-11-jdk python3-pip libffi-dev libssl-dev liblzo2-dev libx11-dev zlib1g-dev
           pip install --upgrade pip setuptools
 
+      # Install Android SDK and tools
+      - name: Install Android SDK and tools
+        run: |
+          mkdir -p $HOME/android-sdk
+          cd $HOME/android-sdk
+          wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip -O cmdline-tools.zip
+          unzip cmdline-tools.zip -d cmdline-tools
+          mkdir -p cmdline-tools/latest
+          mv cmdline-tools/cmdline-tools/* cmdline-tools/latest/
+          export ANDROID_HOME=$HOME/android-sdk
+          export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools/bin
+          yes | sdkmanager --licenses
+          sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0"
+
       # Install Buildozer
       - name: Install Buildozer
         run: |
@@ -37,7 +51,7 @@ jobs:
       - name: Install Cython
         run: |
           pip install cython
-          
+
       # Build the APK
       - name: Build APK
         run: |
