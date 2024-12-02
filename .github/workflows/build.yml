@@ -21,16 +21,18 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y openjdk-8-jdk wget unzip
-        # Download and install Android SDK
+        # Download Android command-line tools
         wget https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip -O /tmp/android-sdk.zip
         sudo unzip /tmp/android-sdk.zip -d /usr/local/android-sdk
-        # Add android-sdk to the path
+        # Move the tools into the proper directory
+        sudo mv /usr/local/android-sdk/cmdline-tools /usr/local/android-sdk/cmdline-tools/latest
+        # Add sdkmanager to PATH
         echo "export ANDROID_HOME=/usr/local/android-sdk" >> $GITHUB_ENV
-        echo "export PATH=$ANDROID_HOME/cmdline-tools/bin:$PATH" >> $GITHUB_ENV
-        # Accept licenses and install necessary SDK components
-        sdkmanager --licenses
-        sdkmanager --update
-        sdkmanager "build-tools;29.0.2" "platforms;android-29" "platform-tools" "tools"
+        echo "export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH" >> $GITHUB_ENV
+        # Install necessary SDK components
+        sudo $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+        sudo $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --update
+        sudo $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;29.0.2" "platforms;android-29" "platform-tools" "tools"
         
     - name: Install Buildozer
       run: |
