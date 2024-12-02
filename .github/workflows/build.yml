@@ -32,7 +32,6 @@ jobs:
       - name: install buildozer
         run: |
           pip install buildozer
-          buildozer init
 
       # Build the APK
       - name: Build APK
