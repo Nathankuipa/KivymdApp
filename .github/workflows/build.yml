@@ -29,12 +29,13 @@ jobs:
           pip install --upgrade pip setuptools
 
       # Install Buildozer
-      - name: install buildozer
+      - name: Install Buildozer
         run: |
           pip install buildozer
-      #install Cython
-      -name: install cython
-       run: |
+
+      # Install Cython
+      - name: Install Cython
+        run: |
           pip install cython
           
       # Build the APK
@@ -47,4 +48,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: app-debug.apk
-          path: bin/*.apk
+          path: bin/*.apk 
